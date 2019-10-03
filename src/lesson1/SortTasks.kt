@@ -2,6 +2,8 @@
 
 package lesson1
 
+import java.io.File
+
 /**
  * Сортировка времён
  *
@@ -33,7 +35,37 @@ package lesson1
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun sortTimes(inputName: String, outputName: String) {
-    TODO()
+    val text = File(inputName).readLines()
+    val days = mutableListOf<Pair<Int, String>>()
+    val nights = mutableListOf<Pair<Int, String>>()
+    val daysAns = mutableListOf<String>()
+    val nightsAns = mutableListOf<String>()
+
+    for (line in text) {
+        if (Regex("""((\d\d):(\d\d):(\d\d)\s(AM|PM))""").matches(line)) {
+
+            val timeAndSun = line.split(" ")
+            val hours = (timeAndSun[0].split(":")[0]).toInt()
+            val minutes = (timeAndSun[0].split(":")[1]).toInt()
+            val seconds = (timeAndSun[0].split(":")[2]).toInt()
+
+            if (hours !in 1..12 || minutes !in 0..59 || seconds !in 0..59) throw Exception("Неверный формат")
+
+            if ("AM" in line) {
+                days += Pair(hours % 12 * 3600 + minutes * 60 + seconds, line)
+            } else nights += Pair(hours % 12 * 3600 + minutes * 60 + seconds, line)
+
+        } else throw Exception("Неверный формат")
+    }
+
+    for (pair in days.sortedBy { it.first }) {
+        daysAns.add(pair.second)
+    }
+    for (pair in nights.sortedBy { it.first }) {
+        nightsAns.add(pair.second)
+    }
+
+    File(outputName).writeText((daysAns + nightsAns).joinToString("\n"))
 }
 
 /**
@@ -63,7 +95,45 @@ fun sortTimes(inputName: String, outputName: String) {
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun sortAddresses(inputName: String, outputName: String) {
-    TODO()
+    val text = File(inputName).readLines()
+
+    val temp = mutableListOf<Pair<String, Pair<String, Int>>>()
+
+    for (line in text) {
+        if (Regex("""\S+\s\S+\s-\s\S+\s\d+""").matches(line)) {
+
+            val parts = line.split(" ")
+            temp.add(Pair(parts[0] + " " + parts[1], Pair(parts[3], parts[4].toInt())))
+
+        } else throw Exception("Неверный формат")
+    }
+
+    val sorted = temp.sortedBy { it.second.second }.sortedBy { it.second.first }
+    val names = mutableListOf<String>()
+    val answer = mutableListOf<String>()
+
+    for (i in 0..sorted.size - 2) {
+        if (sorted[i].second == sorted[(i + 1)].second) {
+            if (i != sorted.size - 2) names.add(sorted[i].first)
+            else {
+                names.add(sorted[i + 1].first)
+                adding(sorted[i], names, answer)
+            }
+        } else {
+            if (i != sorted.size - 2) {
+                adding(sorted[i], names, answer)
+                names.clear()
+            } else {
+                adding(sorted[i], names, answer)
+                answer.add("${sorted[i + 1].second} - ${sorted[i + 1].first}")
+            }
+        }
+    }
+    File(outputName).writeText(answer.joinToString("\n"))
+}
+fun adding(pair: Pair<String, Pair<String, Int>>, names: MutableList<String>, answer: MutableList<String>) {
+    names.add(pair.first)
+    answer.add("${pair.second.first} ${pair.second.second} - " + names.sorted().joinToString(", "))
 }
 
 /**
@@ -97,7 +167,9 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 121.3
  */
 fun sortTemperatures(inputName: String, outputName: String) {
-    TODO()
+    val answer = mutableListOf<Double>()
+    File(inputName).readLines().forEach { answer.add(it.toDouble()) }
+    File(outputName).writeText(answer.sorted().joinToString("\n"))
 }
 
 /**
@@ -130,7 +202,21 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  */
 fun sortSequence(inputName: String, outputName: String) {
-    TODO()
+    val text = File(inputName).readLines()
+    val nums = mutableListOf<Int>()
+    val answer = mutableListOf<Int>()
+
+    text.forEach { nums.add(it.toInt()) }
+
+    val numCounts = nums.sorted().groupingBy { it }.eachCount()
+    val max = numCounts.values.max()
+    val maxStr = numCounts.filter { it.value == max }.keys.min()
+
+    nums.forEach { if (it != maxStr) answer.add(it) }
+
+    for (i in 1..max!!) answer.add(maxStr!!)
+
+    File(outputName).writeText(answer.joinToString("\n"))
 }
 
 /**
@@ -148,6 +234,9 @@ fun sortSequence(inputName: String, outputName: String) {
  * Результат: second = [1 3 4 9 9 13 15 20 23 28]
  */
 fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
-    TODO()
+    for (i in 1..first.size) {
+        second[i - 1] = first[i - 1]
+    }
+    second.sort()
 }
 

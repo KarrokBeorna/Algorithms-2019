@@ -45,9 +45,10 @@ fun sortTimes(inputName: String, outputName: String) {
         if (Regex("""((\d\d):(\d\d):(\d\d)\s(AM|PM))""").matches(line)) {
 
             val timeAndSun = line.split(" ")
-            val hours = (timeAndSun[0].split(":")[0]).toInt()
-            val minutes = (timeAndSun[0].split(":")[1]).toInt()
-            val seconds = (timeAndSun[0].split(":")[2]).toInt()
+            val time = timeAndSun[0].split(":")
+            val hours = (time[0]).toInt()
+            val minutes = (time[1]).toInt()
+            val seconds = (time[2]).toInt()
 
             if (hours !in 1..12 || minutes !in 0..59 || seconds !in 0..59) throw Exception("Неверный формат")
 
@@ -209,12 +210,12 @@ fun sortSequence(inputName: String, outputName: String) {
     text.forEach { nums.add(it.toInt()) }
 
     val numCounts = nums.sorted().groupingBy { it }.eachCount()
-    val max = numCounts.values.max()
-    val maxStr = numCounts.filter { it.value == max }.keys.min()
+    val max = numCounts.values.max() ?: 0
+    val maxStr = numCounts.filter { it.value == max }.keys.min() ?: 0
 
     nums.forEach { if (it != maxStr) answer.add(it) }
 
-    for (i in 1..max!!) answer.add(maxStr!!)
+    for (i in 1..max) answer.add(maxStr)
 
     File(outputName).writeText(answer.joinToString("\n"))
 }
@@ -231,12 +232,31 @@ fun sortSequence(inputName: String, outputName: String) {
  * first = [4 9 15 20 28]
  * second = [null null null null null 1 3 9 13 18 23]
  *
- * Результат: second = [1 3 4 9 9 13 15 20 23 28]
+ * Результат: second = [1 3 4 9 9 13 15 18 20 23 28]
  */
 fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
-    for (i in 1..first.size) {
-        second[i - 1] = first[i - 1]
+    var count = 0
+    var numSec = first.size
+    var index = 0
+    while (index < second.size && count < first.size) {
+        if (count == first.size - 1 && index == second.size - 1) {
+            second[index] = first[count]
+            index++
+        } else
+            if (numSec == second.size) {
+                second[index] = first[count]
+                count++
+                index++
+            } else
+                if (second[numSec]!! < first[count]) {
+                    second[index] = second[numSec]
+                    numSec++
+                    index++
+                } else {
+                    second[index] = first[count]
+                    count++
+                    index++
+                }
     }
-    second.sort()
 }
 

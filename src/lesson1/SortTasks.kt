@@ -98,44 +98,44 @@ fun sortTimes(inputName: String, outputName: String) {
 fun sortAddresses(inputName: String, outputName: String) {
     val text = File(inputName).readLines()
 
-    val temp = mutableListOf<Pair<String, Pair<String, Int>>>()
+    class Resident(var person: String, var street: String, var numHouse: Int)
+
+    val temp = mutableListOf<Resident>()
 
     for (line in text) {
         if (Regex("""\S+\s\S+\s-\s\S+\s\d+""").matches(line)) {
 
             val parts = line.split(" ")
-            temp.add(Pair(parts[0] + " " + parts[1], Pair(parts[3], parts[4].toInt())))
+            temp.add(Resident(parts[0] + " " + parts[1], parts[3], parts[4].toInt()))
 
         } else throw Exception("Неверный формат")
     }
 
-    val sorted = temp.sortedBy { it.second.second }.sortedBy { it.second.first }
+    val sorted = temp.sortedWith(compareBy(Resident::street, Resident::numHouse))
     val names = mutableListOf<String>()
     val answer = mutableListOf<String>()
 
     for (i in 0..sorted.size - 2) {
-        if (sorted[i].second == sorted[(i + 1)].second) {
-            if (i != sorted.size - 2) names.add(sorted[i].first)
+        names.add(sorted[i].person)
+        if (sorted[i].street == sorted[i + 1].street && sorted[i].numHouse == sorted[i + 1].numHouse) {
+            if (i != sorted.size - 2)
             else {
-                names.add(sorted[i + 1].first)
-                adding(sorted[i], names, answer)
+                names.add(sorted[i + 1].person)
+                answer.add("${sorted[i].street} ${sorted[i].numHouse} - " + names.sorted().joinToString(", "))
             }
         } else {
             if (i != sorted.size - 2) {
-                adding(sorted[i], names, answer)
+                answer.add("${sorted[i].street} ${sorted[i].numHouse} - " + names.sorted().joinToString(", "))
                 names.clear()
             } else {
-                adding(sorted[i], names, answer)
-                answer.add("${sorted[i + 1].second} - ${sorted[i + 1].first}")
+                answer.add("${sorted[i].street} ${sorted[i].numHouse} - " + names.sorted().joinToString(", "))
+                answer.add("${sorted[i + 1].street} ${sorted[i + 1].numHouse} - ${sorted[i + 1].person}")
             }
         }
     }
     File(outputName).writeText(answer.joinToString("\n"))
 }
-fun adding(pair: Pair<String, Pair<String, Int>>, names: MutableList<String>, answer: MutableList<String>) {
-    names.add(pair.first)
-    answer.add("${pair.second.first} ${pair.second.second} - " + names.sorted().joinToString(", "))
-}
+
 
 /**
  * Сортировка температур
@@ -170,6 +170,23 @@ fun adding(pair: Pair<String, Pair<String, Int>>, names: MutableList<String>, an
 fun sortTemperatures(inputName: String, outputName: String) {
     val answer = mutableListOf<Double>()
     File(inputName).readLines().forEach { answer.add(it.toDouble()) }
+    /**0for (i in 1 until answer.size) {
+        var repl = i - 1
+        var count = 0
+        while (answer[i] < answer[repl]) {
+            if (repl > 0) {
+                repl--
+                count++
+            } else {
+                count++
+                break
+            }
+        }
+        if (count > 0) {
+            answer.add(i - count, answer[i])
+            answer.removeAt(i + 1)
+        }
+    }*/
     File(outputName).writeText(answer.sorted().joinToString("\n"))
 }
 

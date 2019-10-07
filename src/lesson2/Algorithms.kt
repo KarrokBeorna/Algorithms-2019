@@ -2,6 +2,10 @@
 
 package lesson2
 
+import java.io.File
+import java.lang.Math.sqrt
+import kotlin.math.floor
+
 /**
  * Получение наибольшей прибыли (она же -- поиск максимального подмассива)
  * Простая
@@ -27,7 +31,30 @@ package lesson2
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
-    TODO()
+
+    val temp = mutableListOf<Int>()
+
+    File(inputName).readLines().forEach { temp.add(it.toInt()) }
+
+    var buyIndex = 0
+    var sellIndex = 1
+
+    for (i in 1 until temp.size) {
+        var j = i
+        do {
+            j--
+            val sell = temp[sellIndex] - temp[buyIndex]
+            val newSell = temp[i] - temp[j]
+
+            if (sell < 0 && temp[j] < temp[buyIndex] || temp[j] <= temp[buyIndex] && newSell > sell) {
+                sellIndex = i
+                buyIndex = j
+            }
+
+        } while (j != buyIndex)
+    }
+
+    return Pair(buyIndex + 1, sellIndex + 1)
 }
 
 /**
@@ -95,7 +122,66 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * вернуть ту из них, которая встречается раньше в строке first.
  */
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+
+    val listForFirst = mutableListOf<String>()
+    var listForSecond = mutableListOf<String>()
+    var answer = ""
+
+    /**
+     *  Создаем всевозможные комбинации из подряд идущих символов
+     */
+    for (i in -1..first.length - 2) {
+        var tempStr = ""
+        for (j in i + 1 until first.length) {
+            tempStr = "$tempStr${first[j]}"
+            listForFirst.add(tempStr)
+        }
+    }
+    for (i in -1..second.length - 2) {
+        var tempStr = ""
+        for (j in i + 1 until second.length) {
+            tempStr = "$tempStr${second[j]}"
+            listForSecond.add(tempStr)
+        }
+    }
+
+    /**
+     *  Сортируем созданные ранее списки,
+     *  чтобы наибольшие элементы были в самом начале
+     */
+    listForFirst.sortByDescending { it.length }
+    listForSecond.sortByDescending { it.length }
+
+    val tempListForSecond = listForSecond
+
+    var i = 0
+
+    /** Пока не найдем первое совпадение или не дойдем до последнего элемента первого списка:
+     *  Пока длина элемента второго списка >= длины исследуемой строки:
+     *  Если длины равны, то сравниваем на равенство, иначе удаляем этот элемент из второго списка;
+     *  Если исследуемый индекс второго списка пока что меньше (размер второго списка - 1), то индекс увеличиваем;
+     *  Увеличиваем индекс первого списка, приравниваем "старый" второй лист к "новому";
+     *
+     *  Собственно, мы избавляемся от длинных строк, с которыми уже не нужно
+     *  сравниваться и сравниваемся лишь с себе подобными.
+     *
+     *  Почему он не хочет проходить тесты? Kappa...
+     */
+    while (answer == "" && i < listForFirst.size) {
+        var indexSec = 0
+        while (listForSecond[indexSec].length >= listForFirst[i].length) {
+            if (listForFirst[i].length == listForSecond[indexSec].length) {
+                if (listForFirst[i] == listForSecond[indexSec]) answer = listForFirst[i]
+            } else {
+                tempListForSecond.removeAt(indexSec)
+            }
+            if (indexSec != listForSecond.size - 1) indexSec++ else break
+        }
+        i++
+        listForSecond = tempListForSecond
+    }
+
+    return answer
 }
 
 /**
@@ -109,7 +195,29 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Единица простым числом не считается.
  */
 fun calcPrimesNumber(limit: Int): Int {
-    TODO()
+
+    var answer = 1
+
+    when {
+        limit <= 1 -> return 0
+        limit == 2 -> return 1
+    }
+
+    for (i in 3..limit) {
+        var temp = 0
+        val range = sqrt(i.toDouble()).toInt() + 1
+        for (j in 2..range) {
+            if (i % j != 0) {
+                temp++
+            } else {
+                temp = 0
+                break
+            }
+        }
+        if (temp != 0) answer++
+    }
+
+    return answer
 }
 
 /**

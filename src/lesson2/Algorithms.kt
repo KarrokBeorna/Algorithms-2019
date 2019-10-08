@@ -31,10 +31,14 @@ import kotlin.math.floor
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
 fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
-
+    val text = File(inputName).readLines()
     val temp = mutableListOf<Int>()
 
-    File(inputName).readLines().forEach { temp.add(it.toInt()) }
+    for (line in text) {
+        if (Regex("""\d+""").matches(line))
+            temp.add(line.toInt())
+        else throw Exception("Неверный формат")
+    }
 
     var buyIndex = 0
     var sellIndex = 1

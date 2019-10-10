@@ -30,7 +30,7 @@ import kotlin.math.floor
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
+fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> { //Трудоёмкость - O(N), Ресурсоёмкость - O(N) - O(2N)
     val text = File(inputName).readLines()
     val temp = mutableListOf<Int>()
 
@@ -42,20 +42,27 @@ fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> {
 
     var buyIndex = 0
     var sellIndex = 1
+    var min = 0
 
     for (i in 1 until temp.size) {
-        var j = i
-        do {
-            j--
-            val sell = temp[sellIndex] - temp[buyIndex]
-            val newSell = temp[i] - temp[j]
+        val j = i - 1
 
-            if (sell < 0 && temp[j] < temp[buyIndex] || temp[j] <= temp[buyIndex] && newSell > sell) {
-                sellIndex = i
-                buyIndex = j
-            }
+        if (temp[j] < temp[min]) min = j
 
-        } while (j != buyIndex)
+        val sell1 = temp[sellIndex] - temp[buyIndex]
+        val sell2 = temp[i] - temp[j]
+        val sell3 = temp[i] - temp[buyIndex]
+        val sell4 = temp[i] - temp[min]
+
+        if (sell1 < 0 && sell2 >= sell1) {
+            sellIndex = i
+            buyIndex = j
+        } else if (sell3 > sell1 && sell4 <= sell3) {
+            sellIndex = i
+        } else if (sell4 > sell1 && sell4 > sell3) {
+            sellIndex = i
+            buyIndex = min
+        }
     }
 
     return Pair(buyIndex + 1, sellIndex + 1)
@@ -125,9 +132,9 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * Если имеется несколько самых длинных общих подстрок одной длины,
  * вернуть ту из них, которая встречается раньше в строке first.
  */
-fun longestCommonSubstring(first: String, second: String): String {
-
-    val listForFirst = mutableListOf<String>()
+fun longestCommonSubstring(first: String, second: String): String { //Трудоёмкость - O(N^2), Ресурсоёмкость ~ O(N^2 / 2)
+                                                                    //это для каждого цикла создания вариантов
+    val listForFirst = mutableListOf<String>()                      //А в конце O(N)
     var listForSecond = mutableListOf<String>()
     var answer = ""
 
@@ -198,7 +205,7 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Справка: простым считается число, которое делится нацело только на 1 и на себя.
  * Единица простым числом не считается.
  */
-fun calcPrimesNumber(limit: Int): Int {
+fun calcPrimesNumber(limit: Int): Int { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
 
     var answer = 1
 

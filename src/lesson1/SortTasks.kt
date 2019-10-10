@@ -34,12 +34,12 @@ import java.io.File
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun sortTimes(inputName: String, outputName: String) {
-    val text = File(inputName).readLines()
-    val days = mutableListOf<Pair<Int, String>>()
-    val nights = mutableListOf<Pair<Int, String>>()
-    val daysAns = mutableListOf<String>()
-    val nightsAns = mutableListOf<String>()
+fun sortTimes(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - одно из трёх:
+    val text = File(inputName).readLines()             //O(N) - если округляется
+    val days = mutableListOf<Pair<Int, String>>()      //O(2N) - если считать, что 2 последних цикла перебирают в сумме
+    val nights = mutableListOf<Pair<Int, String>>()    //лишь один массив с кол-вом элементов N
+    val daysAns = mutableListOf<String>()              //O(3N) - если для каждого массива выделяется N вне зависимости
+    val nightsAns = mutableListOf<String>()            //от кол-ва элементов перебора
 
     for (line in text) {
         if (Regex("""((\d\d):(\d\d):(\d\d)\s(AM|PM))""").matches(line)) {
@@ -95,8 +95,8 @@ fun sortTimes(inputName: String, outputName: String) {
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun sortAddresses(inputName: String, outputName: String) {
-    val text = File(inputName).readLines()
+fun sortAddresses(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - нужно узнать
+    val text = File(inputName).readLines()                 //ответ на первое задание, но предполагаю, что O(N) - O(2N)
 
     class Resident(var person: String, var street: String, var numHouse: Int)
 
@@ -167,7 +167,7 @@ fun sortAddresses(inputName: String, outputName: String) {
  * 99.5
  * 121.3
  */
-fun sortTemperatures(inputName: String, outputName: String) {
+fun sortTemperatures(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - O(N)
     val answer = mutableListOf<Double>()
     File(inputName).readLines().forEach { answer.add(it.toDouble()) }
     /**0for (i in 1 until answer.size) {
@@ -219,7 +219,7 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  * 2
  */
-fun sortSequence(inputName: String, outputName: String) {
+fun sortSequence(inputName: String, outputName: String) { //Трудоемкость - O(NlogN), Ресурсоёмкость - O(3N) - O(N)
     val text = File(inputName).readLines()
     val nums = mutableListOf<Int>()
     val answer = mutableListOf<Int>()
@@ -251,7 +251,8 @@ fun sortSequence(inputName: String, outputName: String) {
  *
  * Результат: second = [1 3 4 9 9 13 15 18 20 23 28]
  */
-fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) {
+fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
+                                                                          //или вообще O(1)
     var count = 0
     var numSec = first.size
     var index = 0

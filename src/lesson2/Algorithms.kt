@@ -48,12 +48,12 @@ fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> { //Трудоёмко
     for (i in 1 until temp.size) {
         val j = i - 1
 
-        if (temp[j] < temp[min]) min = j
+        if (temp[j] < temp[min]) min = j             // На всякий случай запоминаем минимальную цену
 
-        val sell1 = temp[sellIndex] - temp[buyIndex]
-        val sell2 = temp[i] - temp[j]
-        val sell3 = temp[i] - temp[buyIndex]
-        val sell4 = temp[i] - temp[min]
+        val sell1 = temp[sellIndex] - temp[buyIndex] // Запомненная лучшая продажа
+        val sell2 = temp[i] - temp[j]                // Новая вероятная пара после новой индексации
+        val sell3 = temp[i] - temp[buyIndex]         // Продажа нового индекса и запомненной покупки
+        val sell4 = temp[i] - temp[min]              // Продажа нового индекса и индекса с минимальной ценой
 
         if (sell1 < 0 && sell2 >= sell1) {
             sellIndex = i

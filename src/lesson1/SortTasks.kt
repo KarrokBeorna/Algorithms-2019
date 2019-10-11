@@ -34,12 +34,13 @@ import java.io.File
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun sortTimes(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - одно из трёх:
-    val text = File(inputName).readLines()             //O(N) - если округляется
-    val days = mutableListOf<Pair<Int, String>>()      //O(2N) - если считать, что 2 последних цикла перебирают в сумме
-    val nights = mutableListOf<Pair<Int, String>>()    //лишь один массив с кол-вом элементов N
-    val daysAns = mutableListOf<String>()              //O(3N) - если для каждого массива выделяется N вне зависимости
-    val nightsAns = mutableListOf<String>()            //от кол-ва элементов перебора
+fun sortTimes(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - O(N)
+
+    val text = File(inputName).readLines()
+    val days = mutableListOf<Pair<Int, String>>()
+    val nights = mutableListOf<Pair<Int, String>>()
+    val daysAns = mutableListOf<String>()
+    val nightsAns = mutableListOf<String>()
 
     for (line in text) {
         if (Regex("""((\d\d):(\d\d):(\d\d)\s(AM|PM))""").matches(line)) {
@@ -95,8 +96,9 @@ fun sortTimes(inputName: String, outputName: String) { //Трудоёмкост�
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun sortAddresses(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - нужно узнать
-    val text = File(inputName).readLines()                 //ответ на первое задание, но предполагаю, что O(N) - O(2N)
+fun sortAddresses(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - O(N)
+
+    val text = File(inputName).readLines()
 
     class Resident(var person: String, var street: String, var numHouse: Int)
 
@@ -167,27 +169,27 @@ fun sortAddresses(inputName: String, outputName: String) { //Трудоёмко�
  * 99.5
  * 121.3
  */
-fun sortTemperatures(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - O(N)
+fun sortTemperatures(inputName: String, outputName: String) { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
+
+    val temp = mutableListOf<Int>()
     val answer = mutableListOf<Double>()
-    File(inputName).readLines().forEach { answer.add(it.toDouble()) }
-    /**0for (i in 1 until answer.size) {
-        var repl = i - 1
-        var count = 0
-        while (answer[i] < answer[repl]) {
-            if (repl > 0) {
-                repl--
-                count++
-            } else {
-                count++
-                break
-            }
-        }
-        if (count > 0) {
-            answer.add(i - count, answer[i])
-            answer.removeAt(i + 1)
-        }
-    }*/
-    File(outputName).writeText(answer.sorted().joinToString("\n"))
+    val tempMap = mutableMapOf<Int, Int>()
+
+    File(inputName).readLines().forEach { temp.add((it.toDouble() * 10).toInt()) }
+
+    for (i in -2730..5000) {
+        tempMap[i] = 0
+    }
+
+    for (i in temp) {
+        tempMap[i] = tempMap[i]!!.plus(1)
+    }
+
+    for ((num, count) in tempMap) {
+        if (count != 0) repeat(count) { answer.add(num.toDouble() / 10) }
+    }
+
+    File(outputName).writeText(answer.joinToString("\n"))
 }
 
 /**
@@ -219,14 +221,15 @@ fun sortTemperatures(inputName: String, outputName: String) { //Трудоёмк
  * 2
  * 2
  */
-fun sortSequence(inputName: String, outputName: String) { //Трудоемкость - O(NlogN), Ресурсоёмкость - O(3N) - O(N)
+fun sortSequence(inputName: String, outputName: String) { //Трудоемкость - O(N), Ресурсоёмкость - O(N)
+
     val text = File(inputName).readLines()
     val nums = mutableListOf<Int>()
     val answer = mutableListOf<Int>()
 
     text.forEach { nums.add(it.toInt()) }
 
-    val numCounts = nums.sorted().groupingBy { it }.eachCount()
+    val numCounts = nums.groupingBy { it }.eachCount()
     val max = numCounts.values.max() ?: 0
     val maxStr = numCounts.filter { it.value == max }.keys.min() ?: 0
 
@@ -251,8 +254,8 @@ fun sortSequence(inputName: String, outputName: String) { //Трудоемкос
  *
  * Результат: second = [1 3 4 9 9 13 15 18 20 23 28]
  */
-fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
-                                                                          //или вообще O(1)
+fun <T : Comparable<T>> mergeArrays(first: Array<T>, second: Array<T?>) { //Трудоёмкость - O(N), Ресурсоёмкость - O(1)
+
     var count = 0
     var numSec = first.size
     var index = 0

@@ -71,6 +71,7 @@ abstract class AbstractAlgorithmsTests {
             assertEquals(1, josephTask(menNumber, 2))
             menNumber *= 2
         }
+        assertEquals(1, josephTask(9, 3))
     }
 
     fun longestCommonSubstring(longestCommonSubstring: (String, String) -> String) {

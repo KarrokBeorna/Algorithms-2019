@@ -30,7 +30,8 @@ import kotlin.math.floor
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> { //Трудоёмкость - O(N), Ресурсоёмкость - O(N) - O(2N)
+fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
+
     val text = File(inputName).readLines()
     val temp = mutableListOf<Int>()
 
@@ -117,8 +118,17 @@ fun optimizeBuyAndSell(inputName: String): Pair<Int, Int> { //Трудоёмко
  * Общий комментарий: решение из Википедии для этой задачи принимается,
  * но приветствуется попытка решить её самостоятельно.
  */
-fun josephTask(menNumber: Int, choiceInterval: Int): Int {
-    TODO()
+fun josephTask(menNumber: Int, choiceInterval: Int): Int { //Трудоёмкость - O(N), Ресурсоёмкость - O(1)
+
+    if (choiceInterval == 1) return menNumber
+
+    var previous = 1
+
+    for (i in 2..menNumber) {
+        previous = (choiceInterval - 1 + previous) % i + 1
+    }
+
+    return previous
 }
 
 /**
@@ -132,9 +142,9 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * Если имеется несколько самых длинных общих подстрок одной длины,
  * вернуть ту из них, которая встречается раньше в строке first.
  */
-fun longestCommonSubstring(first: String, second: String): String { //Трудоёмкость - O(N^2), Ресурсоёмкость ~ O(N^2 / 2)
-                                                                    //это для каждого цикла создания вариантов
-    val listForFirst = mutableListOf<String>()                      //А в конце O(N)
+fun longestCommonSubstring(first: String, second: String): String { //Трудоёмкость - O(N^2), Ресурсоёмкость - O(N^2)
+
+    val listForFirst = mutableListOf<String>()
     var listForSecond = mutableListOf<String>()
     var answer = ""
 
@@ -205,18 +215,19 @@ fun longestCommonSubstring(first: String, second: String): String { //Трудо
  * Справка: простым считается число, которое делится нацело только на 1 и на себя.
  * Единица простым числом не считается.
  */
-fun calcPrimesNumber(limit: Int): Int { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
+fun calcPrimesNumber(limit: Int): Int { //Трудоёмкость - O(N * sqrt(N)), Ресурсоёмкость - O(1)
 
-    var answer = 1
+    var answer = 2
 
     when {
         limit <= 1 -> return 0
         limit == 2 -> return 1
+        limit == 3 -> return 2
     }
 
-    for (i in 3..limit) {
+    for (i in 4..limit) {
         var temp = 0
-        val range = sqrt(i.toDouble()).toInt() + 1
+        val range = sqrt(i.toDouble()).toInt()
         for (j in 2..range) {
             if (i % j != 0) {
                 temp++

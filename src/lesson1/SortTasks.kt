@@ -96,7 +96,7 @@ fun sortTimes(inputName: String, outputName: String) { //Трудоёмкост�
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
-fun sortAddresses(inputName: String, outputName: String) { //Трудоёмкость - O(NlogN), Ресурсоёмкость - O(N)
+fun sortAddresses(inputName: String, outputName: String) { //Трудоёмкость - O(N), Ресурсоёмкость - O(N)
 
     val text = File(inputName).readLines()
 

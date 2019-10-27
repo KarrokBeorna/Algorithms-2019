@@ -82,11 +82,11 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
             var remLeft = removable.left
 
             fun replace(replaceable: Node<T>) {
-                // Добавляем перемещаемому узлу потомков
+                // Добавление перемещаемому узлу потомков
                 replaceable.right = remRight
                 replaceable.left = remLeft
 
-                // Находим родителя удаляемого элемента и заменяем ему потомка
+                // Поиск родителя удаляемого элемента и замена ему потомка
                 if (removable != root) {
                     val parentRem = parent(removable)
                     if (parentRem.right == removable) {
@@ -98,7 +98,8 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
             }
 
             when {
-                // Самый правый потомок левого поддерева
+
+                // Наибольший элемент левого поддерева
                 removable.left != null -> {
                     var tempLeft = removable.left!!
                     var parent = tempLeft
@@ -115,7 +116,7 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
                     replace(tempLeft)
                 }
 
-                // Самый левый потомок правого поддерева
+                // Наименьший элемент правого поддерева
                 removable.right != null -> {
                     var tempRight = removable.right!!
                     var parent = tempRight
@@ -132,7 +133,7 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
                     replace(tempRight)
                 }
 
-                // Просто удаляем элемент, если у него нет потомков
+                // Удаляемый - листик
                 else -> if (removable != root) {
                     val parentRem = parent(removable)
                     if (parentRem.right == removable) {

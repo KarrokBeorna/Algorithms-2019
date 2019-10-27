@@ -58,12 +58,92 @@ class KtBinaryTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSorted
         return 1 + max(height(node.left), height(node.right))
     }
 
+    // Функция нахождения родителя удаляемого элемента
+    private fun parent(node: Node<T>): Node<T> {
+        var parent = root!!
+        var next = if (node.value < parent.value) parent.left else parent.right
+        while (next != node) {
+            parent = next!!
+            next = if (node.value < parent.value) parent.left else parent.right
+        }
+        return parent
+    }
+
     /**
      * Удаление элемента в дереве
      * Средняя
      */
-    override fun remove(element: T): Boolean {
-        TODO()
+    override fun remove(element: T): Boolean {                          // N - число вершин
+        val removable = find(element)                                   // T = O(logN)
+                                                                        // M = O(1)
+        if (removable != null && removable.value == element) {
+
+            var remRight = removable.right
+            var remLeft = removable.left
+
+            fun replace(replaceable: Node<T>) {
+                // Добавляем перемещаемому узлу потомков
+                replaceable.right = remRight
+                replaceable.left = remLeft
+
+                // Находим родителя удаляемого элемента и заменяем ему потомка
+                if (removable != root) {
+                    val parentRem = parent(removable)
+                    if (parentRem.right == removable) {
+                        parentRem.right = replaceable
+                    } else {
+                        parentRem.left = replaceable
+                    }
+                } else root = replaceable
+            }
+
+            when {
+                // Самый правый потомок левого поддерева
+                removable.left != null -> {
+                    var tempLeft = removable.left!!
+                    var parent = tempLeft
+
+                    while (tempLeft.right != null) {
+                        parent = tempLeft
+                        tempLeft = tempLeft.right!!
+                    }
+
+                    if (tempLeft == remLeft) {
+                        remLeft = tempLeft.left
+                    } else parent.right = tempLeft.left
+
+                    replace(tempLeft)
+                }
+
+                // Самый левый потомок правого поддерева
+                removable.right != null -> {
+                    var tempRight = removable.right!!
+                    var parent = tempRight
+
+                    while (tempRight.left != null) {
+                        parent = tempRight
+                        tempRight = tempRight.left!!
+                    }
+
+                    if (tempRight == remRight) {
+                        remRight = tempRight.right
+                    } else parent.left = tempRight.right
+
+                    replace(tempRight)
+                }
+
+                // Просто удаляем элемент, если у него нет потомков
+                else -> if (removable != root) {
+                    val parentRem = parent(removable)
+                    if (parentRem.right == removable) {
+                        parentRem.right = null
+                    } else parentRem.left = null
+                } else root = null
+            }
+        } else return false
+
+        size--
+        return true
     }
 
     override operator fun contains(element: T): Boolean {
